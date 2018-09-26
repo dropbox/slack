@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"dropbox/edgestore/checkers/realtime/callbacks"
 )
 
 // Added as a var so that we can change this for testing purposes
@@ -61,11 +62,30 @@ type authTestResponseFull struct {
 	AuthTestResponse
 }
 
+type ResponseFromSlack interface{
+	GetSlackResponse() SlackResponse
+}
+
+type AuthTokenUpdateArgs struct {
+	EnterpriseId string
+	TeamId       string
+	AccessToken  string
+}
+
+type RefreshTokenConfig struct {
+	RefreshToken string
+	ClientId     string
+	ClientSecret string
+	Callback     func(args AuthTokenUpdateArgs)
+	internalCallback     func(*Client, AuthTokenUpdateArgs)
+}
+
 type Client struct {
-	token      string
-	info       Info
-	debug      bool
-	httpclient HTTPRequester
+	token         string
+	refreshConfig RefreshTokenConfig
+	info          Info
+	debug         bool
+	httpclient    HTTPRequester
 }
 
 // Option defines an option for a Client
@@ -90,6 +110,28 @@ func New(token string, options ...Option) *Client {
 	}
 
 	return s
+}
+
+func NewWithRefreshToken(token string, refreshConfig RefreshTokenConfig, options ...Option) *Client {
+	refreshConfig.internalCallback = updateAuthToken
+	s := &Client{
+		token:      token,
+		refreshConfig: refreshConfig,
+		httpclient: customHTTPClient,
+	}
+
+	for _, opt := range options {
+		opt(s)
+	}
+
+	return s
+}
+
+func updateAuthToken(api *Client, args AuthTokenUpdateArgs) {
+	api.token = args.AccessToken
+	if api.refreshConfig.Callback != nil {
+		api.refreshConfig.Callback(args)
+	}
 }
 
 // AuthTest tests if the user is able to do authenticated requests or not

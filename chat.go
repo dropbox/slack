@@ -31,6 +31,10 @@ type chatResponseFull struct {
 	SlackResponse
 }
 
+func (c *chatResponseFull) GetSlackResponse() SlackResponse {
+	return c.SlackResponse
+}
+
 // getMessageTimestamp will inspect the `chatResponseFull` to ruturn a timestamp value
 // in `chat.postMessage` its under `ts`
 // in `chat.postEphemeral` its under `message_ts`
@@ -161,7 +165,7 @@ func (api *Client) SendMessageContext(ctx context.Context, channelID string, opt
 		response chatResponseFull
 	)
 
-	if config, err = applyMsgOptions(api.token, channelID, options...); err != nil {
+	if config, err = applyMsgOptions(api.token, api.refreshConfig, channelID, options...); err != nil {
 		return "", "", "", err
 	}
 
@@ -175,14 +179,15 @@ func (api *Client) SendMessageContext(ctx context.Context, channelID string, opt
 // UnsafeApplyMsgOptions utility function for debugging/testing chat requests.
 // NOTE: USE AT YOUR OWN RISK: No issues relating to the use of this function
 // will be supported by the library.
-func UnsafeApplyMsgOptions(token, channel string, options ...MsgOption) (string, url.Values, error) {
-	config, err := applyMsgOptions(token, channel, options...)
+func UnsafeApplyMsgOptions(token, refreshToken, channel string, options ...MsgOption) (string, url.Values, error) {
+	config, err := applyMsgOptions(token, RefreshTokenConfig{}, channel, options...)
 	return config.endpoint, config.values, err
 }
 
-func applyMsgOptions(token, channel string, options ...MsgOption) (sendConfig, error) {
+func applyMsgOptions(token string, refreshConfig RefreshTokenConfig, channel string, options ...MsgOption) (sendConfig, error) {
 	config := sendConfig{
 		endpoint: SLACK_API + string(chatPostMessage),
+		refreshConfig: refreshConfig,
 		values: url.Values{
 			"token":   {token},
 			"channel": {channel},
@@ -211,6 +216,7 @@ const (
 type sendConfig struct {
 	endpoint string
 	values   url.Values
+	refreshConfig RefreshTokenConfig
 }
 
 // MsgOption option provided when sending a message.
