@@ -330,7 +330,7 @@ func TestSetUserPhoto(t *testing.T) {
 
 	once.Do(startServer)
 	SLACK_API = "http://" + serverAddr + "/"
-	api := New(validToken)
+	api := New(testValidToken)
 
 	err := api.SetUserPhoto(file.Name(), params)
 	if err != nil {
@@ -348,8 +348,8 @@ func setUserPhotoHandler(wantBytes []byte, wantParams UserSetPhotoParams) http.H
 		}
 
 		// Test for expected token
-		if v := r.Form.Get("token"); v != validToken {
-			httpTestErrReply(w, true, fmt.Sprintf("expected multipart form value token=%v", validToken))
+		if v := r.Form.Get("token"); v != testValidToken {
+			httpTestErrReply(w, true, fmt.Sprintf("expected multipart form value token=%v", testValidToken))
 			return
 		}
 

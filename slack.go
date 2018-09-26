@@ -77,7 +77,7 @@ type RefreshTokenConfig struct {
 	ClientId     string
 	ClientSecret string
 	Callback     func(args AuthTokenUpdateArgs)
-	internalCallback     func(*Client, AuthTokenUpdateArgs)
+	internalCallback     func (AuthTokenUpdateArgs)
 }
 
 type Client struct {
@@ -113,12 +113,13 @@ func New(token string, options ...Option) *Client {
 }
 
 func NewWithRefreshToken(token string, refreshConfig RefreshTokenConfig, options ...Option) *Client {
-	refreshConfig.internalCallback = updateAuthToken
 	s := &Client{
 		token:      token,
 		refreshConfig: refreshConfig,
 		httpclient: customHTTPClient,
 	}
+
+	refreshConfig.internalCallback = s.updateAuthToken
 
 	for _, opt := range options {
 		opt(s)
@@ -127,7 +128,7 @@ func NewWithRefreshToken(token string, refreshConfig RefreshTokenConfig, options
 	return s
 }
 
-func updateAuthToken(api *Client, args AuthTokenUpdateArgs) {
+func (api *Client) updateAuthToken(args AuthTokenUpdateArgs) {
 	api.token = args.AccessToken
 	if api.refreshConfig.Callback != nil {
 		api.refreshConfig.Callback(args)

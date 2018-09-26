@@ -185,13 +185,51 @@ func postJSON(ctx context.Context, client HTTPRequester, endpoint, token string,
 
 // post a url encoded form.
 func postForm(ctx context.Context, client HTTPRequester, endpoint string, values url.Values, intf interface{}, debug bool) error {
-	reqBody := strings.NewReader(values.Encode())
-	req, err := http.NewRequest("POST", endpoint, reqBody)
+	req, err := createPostFormRequest(endpoint, values)
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	return doPost(ctx, client, req, intf, debug)
+}
+
+// post a url encoded form.
+func postFormWithRefresh(ctx context.Context, client HTTPRequester, endpoint string, values url.Values,
+	refreshConfig RefreshTokenConfig, intf interface{}, debug bool) error {
+	req, err := createPostFormRequest(endpoint, values)
+	if err != nil {
+		return err
+	}
+	resp := doPost(ctx, client, req, intf, debug)
+
+	responseFromSlack, ok := intf.(ResponseFromSlack)
+	if !ok {
+		return resp
+	}
+
+	slackResponse := responseFromSlack.GetSlackResponse()
+	if !slackResponse.Ok && slackResponse.Error == "invalid_auth" {
+		newToken, err := RefreshToken(ctx, refreshConfig, debug)
+		if err == nil {
+			values.Set("token", newToken)
+			req, err := createPostFormRequest(endpoint, values)
+			if err != nil {
+				return err
+			}
+			resp = doPost(ctx, client, req, intf, debug)
+		}
+	}
+
+	return resp
+}
+
+func createPostFormRequest(endpoint string, values url.Values) (*http.Request, error){
+	reqBody := strings.NewReader(values.Encode())
+	req, err := http.NewRequest("POST", endpoint, reqBody)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	return req, nil
 }
 
 // post to a slack web method.

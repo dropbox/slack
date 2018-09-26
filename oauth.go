@@ -80,23 +80,29 @@ func GetOAuthResponseContext(ctx context.Context, clientID, clientSecret, code, 
 	return response, nil
 }
 
-func RefreshToken(ctx context.Context, config *ClientConfig, debug bool) error {
+func RefreshToken(ctx context.Context, refreshConfig RefreshTokenConfig, debug bool) (string, error) {
 	values := url.Values{
-		"client_id":     {config.clientId},
-		"client_secret": {config.clientSecret},
-		"refresh_token": {config.refreshToken},
+		"client_id":     {refreshConfig.ClientId},
+		"client_secret": {refreshConfig.ClientSecret},
+		"refresh_token": {refreshConfig.RefreshToken},
 		"grant_type": {"refresh_token"},
 	}
 	response := &OAuthResponse{}
-	err := post(ctx, "oauth.access", values, response, debug)
+	err := postSlackMethod(ctx, customHTTPClient,"oauth.access", values, response, debug)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if !response.Ok {
-		return errors.New(response.Error)
+		return "", errors.New(response.Error)
 	}
 
-	config.token = response.AccessToken
+	if refreshConfig.internalCallback != nil {
+		updateArgs := AuthTokenUpdateArgs{
+			TeamId: response.TeamID,
+			AccessToken: response.AccessToken,
+		}
+		refreshConfig.internalCallback(updateArgs)
+	}
 
-	return nil
+	return response.AccessToken, nil
 }

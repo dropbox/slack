@@ -4,7 +4,51 @@ import (
 	"encoding/json"
 	"net/http"
 	"testing"
+	"github.com/stretchr/testify/require"
 )
+
+var registerHandlers sync.Once
+
+func mockHandleChatPostMessage() {
+	http.HandleFunc("/chat.postMessage", func(w http.ResponseWriter, r *http.Request) {
+		token := r.FormValue("token")
+		if token == "" {
+			writeSlackResponse(w, false, "not_authed")
+			return
+		}
+		if token != testValidToken {
+			writeSlackResponse(w, false, "invalid_auth")
+			return
+		}
+
+		writeSlackResponse(w, true, "")
+	})
+}
+
+func TestChatValidToken(t *testing.T) {
+	registerHandlers.Do(mockHandleChatPostMessage)
+	api := setUpClientForWorkspaceApp(testValidToken, "")
+
+	_, _, err := api.PostMessage("#test", "test", PostMessageParameters{})
+	require.Nil(t, err)
+}
+
+func TestChatInvalidToken(t *testing.T) {
+	registerHandlers.Do(mockHandleChatPostMessage)
+	api := setUpClientForWorkspaceApp("bad-token", "")
+
+	_, _, err := api.PostMessage("#test", "test", PostMessageParameters{})
+	require.NotNil(t, err)
+}
+
+func TestChatRefreshToken(t *testing.T) {
+	registerHandlers.Do(mockHandleChatPostMessage)
+	api := setUpClientForWorkspaceApp(testExpiredToken, testRefreshToken)
+
+	_, _, err := api.PostMessage("#test", "test", PostMessageParameters{})
+	require.Nil(t, err)
+}
+
 
 func postMessageInvalidChannelHandler(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Type", "application/json")
