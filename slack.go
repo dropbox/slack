@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"dropbox/edgestore/checkers/realtime/callbacks"
 )
 
 // Added as a var so that we can change this for testing purposes

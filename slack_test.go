@@ -59,10 +59,10 @@ func startServer() {
 		w.Write(response)
 	})
 
-	SLACK_API = "http://" + serverAddr + "/"
 	server := httptest.NewServer(nil)
 	serverAddr = server.Listener.Addr().String()
 	log.Print("Test WebSocket server listening on ", serverAddr)
+	SLACK_API = "http://" + serverAddr + "/"
 }
 
 func writeSlackResponse(w http.ResponseWriter, ok bool, err string){
