@@ -192,7 +192,7 @@ func postForm(ctx context.Context, client HTTPRequester, endpoint string, values
 	return doPost(ctx, client, req, intf, debug)
 }
 
-// post a url encoded form.
+// post a url encoded form, retrying with refresh token if auth fails.
 func postFormWithRefresh(ctx context.Context, client HTTPRequester, endpoint string, values url.Values,
 	refreshConfig RefreshTokenConfig, intf interface{}, debug bool) error {
 	req, err := createPostFormRequest(endpoint, values)

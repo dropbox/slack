@@ -88,7 +88,7 @@ func RefreshToken(ctx context.Context, refreshConfig RefreshTokenConfig, debug b
 		"grant_type": {"refresh_token"},
 	}
 	response := &OAuthResponse{}
-	err := postSlackMethod(ctx, customHTTPClient,"oauth.access", values, response, debug)
+	err := postSlackMethod(ctx, customHTTPClient, "oauth.access", values, response, debug)
 	if err != nil {
 		return "", err
 	}
