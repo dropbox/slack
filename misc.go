@@ -201,6 +201,10 @@ func postFormWithRefresh(ctx context.Context, client HTTPRequester, endpoint str
 	}
 	resp := doPost(ctx, client, req, intf, debug)
 
+	if refreshConfig.RefreshToken == "" {
+		return resp
+	}
+
 	responseFromSlack, ok := intf.(ResponseFromSlack)
 	if !ok {
 		return resp
