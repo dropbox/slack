@@ -80,7 +80,6 @@ type AuthConfig struct {
 }
 
 type Client struct {
-	token      string
 	authConfig AuthConfig
 	info       Info
 	debug      bool
