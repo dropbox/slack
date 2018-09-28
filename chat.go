@@ -169,7 +169,7 @@ func (api *Client) SendMessageContext(ctx context.Context, channelID string, opt
 		return "", "", "", err
 	}
 
-	if err = postFormWithRefresh(ctx, api.httpclient, config.endpoint, config.values, &config.refreshConfig, &response, api.debug); err != nil {
+	if err = api.callSlackMethod(ctx, config.endpoint, config.values, &response); err != nil {
 		return "", "", "", err
 	}
 
@@ -186,7 +186,7 @@ func UnsafeApplyMsgOptions(token, refreshToken, channel string, options ...MsgOp
 
 func applyMsgOptions(token string, refreshConfig RefreshTokenConfig, channel string, options ...MsgOption) (sendConfig, error) {
 	config := sendConfig{
-		endpoint: SLACK_API + string(chatPostMessage),
+		endpoint: string(chatPostMessage),
 		refreshConfig: refreshConfig,
 		values: url.Values{
 			"token":   {token},
