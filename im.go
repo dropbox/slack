@@ -29,9 +29,9 @@ type IM struct {
 	IsUserDeleted bool   `json:"is_user_deleted"`
 }
 
-func imRequest(ctx context.Context, client HTTPRequester, path string, values url.Values, debug bool) (*imResponseFull, error) {
+func (api *Client) imRequest(ctx context.Context, path string, values url.Values) (*imResponseFull, error) {
 	response := &imResponseFull{}
-	err := postSlackMethod(ctx, client, path, values, response, debug)
+	err := api.callSlackMethod(ctx, path, values, response)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (api *Client) CloseIMChannelContext(ctx context.Context, channel string) (b
 		"channel": {channel},
 	}
 
-	response, err := imRequest(ctx, api.httpclient, "im.close", values, api.debug)
+	response, err := api.imRequest(ctx,"im.close", values)
 	if err != nil {
 		return false, false, err
 	}
@@ -74,7 +74,7 @@ func (api *Client) OpenIMChannelContext(ctx context.Context, user string) (bool,
 		"user":  {user},
 	}
 
-	response, err := imRequest(ctx, api.httpclient, "im.open", values, api.debug)
+	response, err := api.imRequest(ctx, "im.open", values)
 	if err != nil {
 		return false, false, "", err
 	}
@@ -94,7 +94,7 @@ func (api *Client) MarkIMChannelContext(ctx context.Context, channel, ts string)
 		"ts":      {ts},
 	}
 
-	_, err := imRequest(ctx, api.httpclient, "im.mark", values, api.debug)
+	_, err := api.imRequest(ctx,"im.mark", values)
 	return err
 }
 
@@ -133,7 +133,7 @@ func (api *Client) GetIMHistoryContext(ctx context.Context, channel string, para
 		}
 	}
 
-	response, err := imRequest(ctx, api.httpclient, "im.history", values, api.debug)
+	response, err := api.imRequest(ctx,"im.history", values)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +151,7 @@ func (api *Client) GetIMChannelsContext(ctx context.Context) ([]IM, error) {
 		"token": {api.token},
 	}
 
-	response, err := imRequest(ctx, api.httpclient, "im.list", values, api.debug)
+	response, err := api.imRequest(ctx,"im.list", values)
 	if err != nil {
 		return nil, err
 	}

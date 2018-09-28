@@ -128,7 +128,7 @@ func (api *Client) CloseGroupContext(ctx context.Context, group string) (bool, b
 		"channel": {group},
 	}
 
-	response, err := imRequest(ctx, api.httpclient, "groups.close", values, api.debug)
+	response, err := api.imRequest(ctx,"groups.close", values)
 	if err != nil {
 		return false, false, err
 	}

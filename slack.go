@@ -157,6 +157,10 @@ func (api *Client) AuthTestContext(ctx context.Context) (response *AuthTestRespo
 	return &responseFull.AuthTestResponse, nil
 }
 
+func (api *Client) callSlackMethod(ctx context.Context, method string, values url.Values, response interface{}) error {
+	return postSlackMethod2(ctx, api.httpclient, "pins.add", &api.refreshConfig, values, response, api.debug)
+}
+
 // SetDebug switches the api into debug mode
 // When in debug mode, it logs various info about what its doing
 // If you ever use this in production, don't call SetDebug(true)

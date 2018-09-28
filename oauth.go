@@ -20,7 +20,7 @@ type OAuthResponseBot struct {
 
 type OAuthResponse struct {
 	AccessToken     string                       `json:"access_token"`
-	RefreshToken	string					     `json:"refresh_token"`
+	RefreshToken	string                       `json:"refresh_token"`
 	Scope           string                       `json:"scope"`
 	TeamName        string                       `json:"team_name"`
 	TeamID          string                       `json:"team_id"`

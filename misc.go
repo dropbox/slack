@@ -194,14 +194,14 @@ func postForm(ctx context.Context, client HTTPRequester, endpoint string, values
 
 // post a url encoded form, retrying with refresh token if auth fails.
 func postFormWithRefresh(ctx context.Context, client HTTPRequester, endpoint string, values url.Values,
-	refreshConfig RefreshTokenConfig, intf interface{}, debug bool) error {
+	refreshConfig *RefreshTokenConfig, intf interface{}, debug bool) error {
 	req, err := createPostFormRequest(endpoint, values)
 	if err != nil {
 		return err
 	}
 	resp := doPost(ctx, client, req, intf, debug)
 
-	if refreshConfig.RefreshToken == "" {
+	if refreshConfig == nil {
 		return resp
 	}
 
@@ -212,7 +212,7 @@ func postFormWithRefresh(ctx context.Context, client HTTPRequester, endpoint str
 
 	slackResponse := responseFromSlack.GetSlackResponse()
 	if !slackResponse.Ok && slackResponse.Error == "invalid_auth" {
-		newToken, err := RefreshToken(ctx, refreshConfig, debug)
+		newToken, err := RefreshToken(ctx, *refreshConfig, debug)
 		if err == nil {
 			values.Set("token", newToken)
 			req, err := createPostFormRequest(endpoint, values)
@@ -239,6 +239,11 @@ func createPostFormRequest(endpoint string, values url.Values) (*http.Request, e
 // post to a slack web method.
 func postSlackMethod(ctx context.Context, client HTTPRequester, path string, values url.Values, intf interface{}, debug bool) error {
 	return postForm(ctx, client, SLACK_API+path, values, intf, debug)
+}
+
+// post to a slack web method.
+func postSlackMethod2(ctx context.Context, client HTTPRequester, path string, refreshConfig *RefreshTokenConfig, values url.Values, intf interface{}, debug bool) error {
+	return postFormWithRefresh(ctx, client, SLACK_API+path, values, refreshConfig, intf, debug)
 }
 
 func parseAdminResponse(ctx context.Context, client HTTPRequester, method string, teamName string, values url.Values, intf interface{}, debug bool) error {
