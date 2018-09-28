@@ -165,7 +165,7 @@ func (api *Client) SendMessageContext(ctx context.Context, channelID string, opt
 		response chatResponseFull
 	)
 
-	if config, err = applyMsgOptions(api.token, api.refreshConfig, channelID, options...); err != nil {
+	if config, err = applyMsgOptions(api.token, api.authConfig, channelID, options...); err != nil {
 		return "", "", "", err
 	}
 
@@ -180,11 +180,11 @@ func (api *Client) SendMessageContext(ctx context.Context, channelID string, opt
 // NOTE: USE AT YOUR OWN RISK: No issues relating to the use of this function
 // will be supported by the library.
 func UnsafeApplyMsgOptions(token, refreshToken, channel string, options ...MsgOption) (string, url.Values, error) {
-	config, err := applyMsgOptions(token, RefreshTokenConfig{}, channel, options...)
+	config, err := applyMsgOptions(token, AuthConfig{}, channel, options...)
 	return config.endpoint, config.values, err
 }
 
-func applyMsgOptions(token string, refreshConfig RefreshTokenConfig, channel string, options ...MsgOption) (sendConfig, error) {
+func applyMsgOptions(token string, refreshConfig AuthConfig, channel string, options ...MsgOption) (sendConfig, error) {
 	config := sendConfig{
 		endpoint: string(chatPostMessage),
 		refreshConfig: refreshConfig,
@@ -214,9 +214,9 @@ const (
 )
 
 type sendConfig struct {
-	endpoint string
-	values   url.Values
-	refreshConfig RefreshTokenConfig
+	endpoint      string
+	values        url.Values
+	refreshConfig AuthConfig
 }
 
 // MsgOption option provided when sending a message.

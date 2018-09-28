@@ -80,7 +80,7 @@ func GetOAuthResponseContext(ctx context.Context, clientID, clientSecret, code, 
 	return response, nil
 }
 
-func RefreshToken(ctx context.Context, refreshConfig RefreshTokenConfig, debug bool) (string, error) {
+func RefreshToken(ctx context.Context, refreshConfig *AuthConfig, debug bool) (string, error) {
 	values := url.Values{
 		"client_id":     {refreshConfig.ClientId},
 		"client_secret": {refreshConfig.ClientSecret},
@@ -96,12 +96,13 @@ func RefreshToken(ctx context.Context, refreshConfig RefreshTokenConfig, debug b
 		return "", errors.New(response.Error)
 	}
 
-	if refreshConfig.onRefresh != nil {
+	refreshConfig.AccessToken = response.AccessToken
+	if refreshConfig.AccessTokenRefreshCallback != nil {
 		updateArgs := AuthTokenUpdateArgs{
 			TeamId: response.TeamID,
 			AccessToken: response.AccessToken,
 		}
-		refreshConfig.onRefresh(updateArgs)
+		refreshConfig.AccessTokenRefreshCallback(updateArgs)
 	}
 
 	return response.AccessToken, nil

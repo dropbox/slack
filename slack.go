@@ -71,20 +71,20 @@ type AuthTokenUpdateArgs struct {
 	AccessToken  string
 }
 
-type RefreshTokenConfig struct {
-	RefreshToken string
-	ClientId     string
-	ClientSecret string
-	Callback     func(args AuthTokenUpdateArgs)
-	onRefresh    func (AuthTokenUpdateArgs)
+type AuthConfig struct {
+	AccessToken				   string
+	RefreshToken               string
+	ClientId                   string
+	ClientSecret               string
+	AccessTokenRefreshCallback func(AuthTokenUpdateArgs)
 }
 
 type Client struct {
-	token         string
-	refreshConfig RefreshTokenConfig
-	info          Info
-	debug         bool
-	httpclient    HTTPRequester
+	token      string
+	authConfig AuthConfig
+	info       Info
+	debug      bool
+	httpclient HTTPRequester
 }
 
 // Option defines an option for a Client
@@ -111,27 +111,18 @@ func New(token string, options ...Option) *Client {
 	return s
 }
 
-func NewWithRefreshToken(token string, refreshConfig RefreshTokenConfig, options ...Option) *Client {
+func NewWithRefreshToken(token string, refreshConfig AuthConfig, options ...Option) *Client {
 	s := &Client{
 		token:      token,
-		refreshConfig: refreshConfig,
+		authConfig: refreshConfig,
 		httpclient: customHTTPClient,
 	}
-
-	refreshConfig.onRefresh = s.updateAuthToken
 
 	for _, opt := range options {
 		opt(s)
 	}
 
 	return s
-}
-
-func (api *Client) updateAuthToken(args AuthTokenUpdateArgs) {
-	api.token = args.AccessToken
-	if api.refreshConfig.Callback != nil {
-		api.refreshConfig.Callback(args)
-	}
 }
 
 // AuthTest tests if the user is able to do authenticated requests or not
@@ -158,7 +149,7 @@ func (api *Client) AuthTestContext(ctx context.Context) (response *AuthTestRespo
 }
 
 func (api *Client) callSlackMethod(ctx context.Context, method string, values url.Values, response interface{}) error {
-	return postSlackMethod(ctx, api.httpclient, method, &api.refreshConfig, values, response, api.debug)
+	return postSlackMethod(ctx, api.httpclient, method, &api.authConfig, values, response, api.debug)
 }
 
 // SetDebug switches the api into debug mode

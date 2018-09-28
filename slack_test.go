@@ -24,7 +24,7 @@ var (
 
 func setUpClientForWorkspaceApp(authToken string, refreshToken string) *Client  {
 	once.Do(startServer)
-	refreshConfig := RefreshTokenConfig{
+	refreshConfig := AuthConfig{
 		RefreshToken: refreshToken,
 		ClientId: testClientId,
 		ClientSecret: testClientSecret,
