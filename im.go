@@ -53,7 +53,7 @@ func (api *Client) CloseIMChannelContext(ctx context.Context, channel string) (b
 		"channel": {channel},
 	}
 
-	response, err := api.imRequest(ctx,"im.close", values)
+	response, err := api.imRequest(ctx, "im.close", values)
 	if err != nil {
 		return false, false, err
 	}
@@ -94,7 +94,7 @@ func (api *Client) MarkIMChannelContext(ctx context.Context, channel, ts string)
 		"ts":      {ts},
 	}
 
-	_, err := api.imRequest(ctx,"im.mark", values)
+	_, err := api.imRequest(ctx, "im.mark", values)
 	return err
 }
 
@@ -133,7 +133,7 @@ func (api *Client) GetIMHistoryContext(ctx context.Context, channel string, para
 		}
 	}
 
-	response, err := api.imRequest(ctx,"im.history", values)
+	response, err := api.imRequest(ctx, "im.history", values)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +151,7 @@ func (api *Client) GetIMChannelsContext(ctx context.Context) ([]IM, error) {
 		"token": {api.authConfig.AccessToken},
 	}
 
-	response, err := api.imRequest(ctx,"im.list", values)
+	response, err := api.imRequest(ctx, "im.list", values)
 	if err != nil {
 		return nil, err
 	}

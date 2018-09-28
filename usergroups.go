@@ -77,7 +77,7 @@ func (api *Client) CreateUserGroupContext(ctx context.Context, userGroup UserGro
 		values["channels"] = []string{strings.Join(userGroup.Prefs.Channels, ",")}
 	}
 
-	response, err := api.userGroupRequest(ctx,"usergroups.create", values)
+	response, err := api.userGroupRequest(ctx, "usergroups.create", values)
 	if err != nil {
 		return UserGroup{}, err
 	}
@@ -96,7 +96,7 @@ func (api *Client) DisableUserGroupContext(ctx context.Context, userGroup string
 		"usergroup": {userGroup},
 	}
 
-	response, err := api.userGroupRequest(ctx,"usergroups.disable", values)
+	response, err := api.userGroupRequest(ctx, "usergroups.disable", values)
 	if err != nil {
 		return UserGroup{}, err
 	}
@@ -115,7 +115,7 @@ func (api *Client) EnableUserGroupContext(ctx context.Context, userGroup string)
 		"usergroup": {userGroup},
 	}
 
-	response, err := api.userGroupRequest(ctx,"usergroups.enable", values)
+	response, err := api.userGroupRequest(ctx, "usergroups.enable", values)
 	if err != nil {
 		return UserGroup{}, err
 	}
@@ -179,7 +179,7 @@ func (api *Client) GetUserGroupsContext(ctx context.Context, options ...GetUserG
 		values.Add("include_users", "true")
 	}
 
-	response, err := api.userGroupRequest(ctx,"usergroups.list", values)
+	response, err := api.userGroupRequest(ctx, "usergroups.list", values)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +210,7 @@ func (api *Client) UpdateUserGroupContext(ctx context.Context, userGroup UserGro
 		values["description"] = []string{userGroup.Description}
 	}
 
-	response, err := api.userGroupRequest(ctx,"usergroups.update", values)
+	response, err := api.userGroupRequest(ctx, "usergroups.update", values)
 	if err != nil {
 		return UserGroup{}, err
 	}
@@ -229,7 +229,7 @@ func (api *Client) GetUserGroupMembersContext(ctx context.Context, userGroup str
 		"usergroup": {userGroup},
 	}
 
-	response, err := api.userGroupRequest(ctx,"usergroups.users.list", values)
+	response, err := api.userGroupRequest(ctx, "usergroups.users.list", values)
 	if err != nil {
 		return []string{}, err
 	}
@@ -249,7 +249,7 @@ func (api *Client) UpdateUserGroupMembersContext(ctx context.Context, userGroup 
 		"users":     {members},
 	}
 
-	response, err := api.userGroupRequest(ctx,"usergroups.users.update", values)
+	response, err := api.userGroupRequest(ctx, "usergroups.users.update", values)
 	if err != nil {
 		return UserGroup{}, err
 	}

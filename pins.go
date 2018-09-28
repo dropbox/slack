@@ -34,7 +34,7 @@ func (api *Client) AddPinContext(ctx context.Context, channel string, item ItemR
 	}
 
 	response := &SlackResponse{}
-	if err := api.callSlackMethod(ctx,"pins.add", values, response); err != nil {
+	if err := api.callSlackMethod(ctx, "pins.add", values, response); err != nil {
 		return err
 	}
 
@@ -63,7 +63,7 @@ func (api *Client) RemovePinContext(ctx context.Context, channel string, item It
 	}
 
 	response := &SlackResponse{}
-	if err := api.callSlackMethod(ctx,"pins.remove", values, response); err != nil {
+	if err := api.callSlackMethod(ctx, "pins.remove", values, response); err != nil {
 		return err
 	}
 
@@ -83,7 +83,7 @@ func (api *Client) ListPinsContext(ctx context.Context, channel string) ([]Item,
 	}
 
 	response := &listPinsResponseFull{}
-	err := api.callSlackMethod(ctx,"pins.list", values, response)
+	err := api.callSlackMethod(ctx, "pins.list", values, response)
 	if err != nil {
 		return nil, nil, err
 	}

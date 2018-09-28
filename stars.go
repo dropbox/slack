@@ -58,7 +58,7 @@ func (api *Client) AddStarContext(ctx context.Context, channel string, item Item
 	}
 
 	response := &SlackResponse{}
-	if err := api.callSlackMethod(ctx,"stars.add", values, response); err != nil {
+	if err := api.callSlackMethod(ctx, "stars.add", values, response); err != nil {
 		return err
 	}
 
@@ -87,7 +87,7 @@ func (api *Client) RemoveStarContext(ctx context.Context, channel string, item I
 	}
 
 	response := &SlackResponse{}
-	if err := api.callSlackMethod(ctx,"stars.remove", values, response); err != nil {
+	if err := api.callSlackMethod(ctx, "stars.remove", values, response); err != nil {
 		return err
 	}
 
@@ -115,7 +115,7 @@ func (api *Client) ListStarsContext(ctx context.Context, params StarsParameters)
 	}
 
 	response := &listResponseFull{}
-	err := api.callSlackMethod(ctx,"stars.list", values, response)
+	err := api.callSlackMethod(ctx, "stars.list", values, response)
 	if err != nil {
 		return nil, nil, err
 	}

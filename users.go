@@ -547,7 +547,7 @@ func (api *Client) GetUserProfileContext(ctx context.Context, userID string, inc
 	}
 	resp := &getUserProfileResponse{}
 
-	err := api.callSlackMethod(ctx,"users.profile.get", values, &resp)
+	err := api.callSlackMethod(ctx, "users.profile.get", values, &resp)
 	if err != nil {
 		return nil, err
 	}

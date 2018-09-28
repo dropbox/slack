@@ -118,7 +118,7 @@ func (api *Client) GetTeamInfoContext(ctx context.Context) (*TeamInfo, error) {
 		"token": {api.authConfig.AccessToken},
 	}
 
-	response, err := api.teamRequest(ctx,"team.info", values)
+	response, err := api.teamRequest(ctx, "team.info", values)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ func (api *Client) GetAccessLogsContext(ctx context.Context, params AccessLogPar
 		values.Add("page", strconv.Itoa(params.Page))
 	}
 
-	response, err := api.accessLogsRequest(ctx,"team.accessLogs", values)
+	response, err := api.accessLogsRequest(ctx, "team.accessLogs", values)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -159,7 +159,7 @@ func (api *Client) GetBillableInfoContext(ctx context.Context, user string) (map
 		"user":  {user},
 	}
 
-	return api.billableInfoRequest(ctx,"team.billableInfo", values)
+	return api.billableInfoRequest(ctx, "team.billableInfo", values)
 }
 
 // GetBillableInfoForTeam returns the billing_active status of all users on the team.
@@ -173,5 +173,5 @@ func (api *Client) GetBillableInfoForTeamContext(ctx context.Context) (map[strin
 		"token": {api.authConfig.AccessToken},
 	}
 
-	return api.billableInfoRequest(ctx,"team.billableInfo", values)
+	return api.billableInfoRequest(ctx, "team.billableInfo", values)
 }

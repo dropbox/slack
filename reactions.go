@@ -155,7 +155,7 @@ func (api *Client) AddReactionContext(ctx context.Context, name string, item Ite
 	}
 
 	response := &SlackResponse{}
-	if err := api.callSlackMethod(ctx,"reactions.add", values, response); err != nil {
+	if err := api.callSlackMethod(ctx, "reactions.add", values, response); err != nil {
 		return err
 	}
 
@@ -189,7 +189,7 @@ func (api *Client) RemoveReactionContext(ctx context.Context, name string, item 
 	}
 
 	response := &SlackResponse{}
-	if err := api.callSlackMethod(ctx,"reactions.remove", values, response); err != nil {
+	if err := api.callSlackMethod(ctx, "reactions.remove", values, response); err != nil {
 		return err
 	}
 
@@ -223,7 +223,7 @@ func (api *Client) GetReactionsContext(ctx context.Context, item ItemRef, params
 	}
 
 	response := &getReactionsResponseFull{}
-	if err := api.callSlackMethod(ctx,"reactions.get", values, response); err != nil {
+	if err := api.callSlackMethod(ctx, "reactions.get", values, response); err != nil {
 		return nil, err
 	}
 	if !response.Ok {
@@ -256,7 +256,7 @@ func (api *Client) ListReactionsContext(ctx context.Context, params ListReaction
 	}
 
 	response := &listReactionsResponseFull{}
-	err := api.callSlackMethod(ctx,"reactions.list", values, response)
+	err := api.callSlackMethod(ctx, "reactions.list", values, response)
 	if err != nil {
 		return nil, nil, err
 	}

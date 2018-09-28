@@ -61,7 +61,7 @@ func (api *Client) EndDNDContext(ctx context.Context) error {
 
 	response := &SlackResponse{}
 
-	if err := api.callSlackMethod(ctx,"dnd.endDnd", values, response); err != nil {
+	if err := api.callSlackMethod(ctx, "dnd.endDnd", values, response); err != nil {
 		return err
 	}
 
@@ -100,7 +100,7 @@ func (api *Client) GetDNDInfoContext(ctx context.Context, user *string) (*DNDSta
 		values.Set("user", *user)
 	}
 
-	response, err := api.dndRequest(ctx,"dnd.info", values)
+	response, err := api.dndRequest(ctx, "dnd.info", values)
 	if err != nil {
 		return nil, err
 	}
