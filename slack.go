@@ -100,7 +100,9 @@ func OptionHTTPClient(c HTTPRequester) func(*Client) {
 // New builds a slack client from the provided token and options.
 func New(token string, options ...Option) *Client {
 	s := &Client{
-		token:      token,
+		authConfig:      AuthConfig{
+			AccessToken: token,
+		},
 		httpclient: customHTTPClient,
 	}
 
@@ -111,9 +113,8 @@ func New(token string, options ...Option) *Client {
 	return s
 }
 
-func NewWithRefreshToken(token string, refreshConfig AuthConfig, options ...Option) *Client {
+func NewWithRefreshToken(refreshConfig AuthConfig, options ...Option) *Client {
 	s := &Client{
-		token:      token,
 		authConfig: refreshConfig,
 		httpclient: customHTTPClient,
 	}
@@ -134,7 +135,7 @@ func (api *Client) AuthTest() (response *AuthTestResponse, error error) {
 func (api *Client) AuthTestContext(ctx context.Context) (response *AuthTestResponse, error error) {
 	api.Debugf("Challenging auth...")
 	responseFull := &authTestResponseFull{}
-	err := api.callSlackMethod(ctx,"auth.test", url.Values{"token": {api.token}}, responseFull)
+	err := api.callSlackMethod(ctx,"auth.test", url.Values{"token": {api.authConfig.AccessToken}}, responseFull)
 	if err != nil {
 		api.Debugf("failed to test for auth: %s", err)
 		return nil, err

@@ -56,7 +56,7 @@ func (api *Client) EndDND() error {
 // EndDNDContext ends the user's scheduled Do Not Disturb session with a custom context
 func (api *Client) EndDNDContext(ctx context.Context) error {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 
 	response := &SlackResponse{}
@@ -76,7 +76,7 @@ func (api *Client) EndSnooze() (*DNDStatus, error) {
 // EndSnoozeContext ends the current user's snooze mode with a custom context
 func (api *Client) EndSnoozeContext(ctx context.Context) (*DNDStatus, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 
 	response, err := api.dndRequest(ctx, "dnd.endSnooze", values)
@@ -94,7 +94,7 @@ func (api *Client) GetDNDInfo(user *string) (*DNDStatus, error) {
 // GetDNDInfoContext provides information about a user's current Do Not Disturb settings with a custom context.
 func (api *Client) GetDNDInfoContext(ctx context.Context, user *string) (*DNDStatus, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if user != nil {
 		values.Set("user", *user)
@@ -115,7 +115,7 @@ func (api *Client) GetDNDTeamInfo(users []string) (map[string]DNDStatus, error) 
 // GetDNDTeamInfoContext provides information about a user's current Do Not Disturb settings with a custom context.
 func (api *Client) GetDNDTeamInfoContext(ctx context.Context, users []string) (map[string]DNDStatus, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"users": {strings.Join(users, ",")},
 	}
 	response := &dndTeamInfoResponse{}
@@ -140,7 +140,7 @@ func (api *Client) SetSnooze(minutes int) (*DNDStatus, error) {
 // For more information see the SetSnooze docs
 func (api *Client) SetSnoozeContext(ctx context.Context, minutes int) (*DNDStatus, error) {
 	values := url.Values{
-		"token":       {api.token},
+		"token":       {api.authConfig.AccessToken},
 		"num_minutes": {strconv.Itoa(minutes)},
 	}
 

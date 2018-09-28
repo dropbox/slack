@@ -39,7 +39,7 @@ func (api *Client) GetBotInfo(bot string) (*Bot, error) {
 // GetBotInfoContext will retrieve the complete bot information using a custom context
 func (api *Client) GetBotInfoContext(ctx context.Context, bot string) (*Bot, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"bot":   {bot},
 	}
 

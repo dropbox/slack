@@ -45,7 +45,7 @@ func (api *Client) AddStar(channel string, item ItemRef) error {
 func (api *Client) AddStarContext(ctx context.Context, channel string, item ItemRef) error {
 	values := url.Values{
 		"channel": {channel},
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 	}
 	if item.Timestamp != "" {
 		values.Set("timestamp", item.Timestamp)
@@ -74,7 +74,7 @@ func (api *Client) RemoveStar(channel string, item ItemRef) error {
 func (api *Client) RemoveStarContext(ctx context.Context, channel string, item ItemRef) error {
 	values := url.Values{
 		"channel": {channel},
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 	}
 	if item.Timestamp != "" {
 		values.Set("timestamp", item.Timestamp)
@@ -102,7 +102,7 @@ func (api *Client) ListStars(params StarsParameters) ([]Item, *Paging, error) {
 // ListStarsContext returns information about the stars a user added with a custom context
 func (api *Client) ListStarsContext(ctx context.Context, params StarsParameters) ([]Item, *Paging, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if params.User != DEFAULT_STARS_USER {
 		values.Add("user", params.User)

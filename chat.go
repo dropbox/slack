@@ -165,7 +165,7 @@ func (api *Client) SendMessageContext(ctx context.Context, channelID string, opt
 		response chatResponseFull
 	)
 
-	if config, err = applyMsgOptions(api.token, api.authConfig, channelID, options...); err != nil {
+	if config, err = applyMsgOptions(api.authConfig.AccessToken, api.authConfig, channelID, options...); err != nil {
 		return "", "", "", err
 	}
 

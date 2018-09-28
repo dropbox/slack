@@ -35,7 +35,7 @@ func (api *Client) DisableUser(teamName string, uid string) error {
 func (api *Client) DisableUserContext(ctx context.Context, teamName string, uid string) error {
 	values := url.Values{
 		"user":       {uid},
-		"token":      {api.token},
+		"token":      {api.authConfig.AccessToken},
 		"set_active": {"true"},
 		"_attempts":  {"1"},
 	}
@@ -61,7 +61,7 @@ func (api *Client) InviteGuestContext(ctx context.Context, teamName, channel, fi
 		"first_name":       {firstName},
 		"last_name":        {lastName},
 		"ultra_restricted": {"1"},
-		"token":            {api.token},
+		"token":            {api.authConfig.AccessToken},
 		"resend":           {"true"},
 		"set_active":       {"true"},
 		"_attempts":        {"1"},
@@ -88,7 +88,7 @@ func (api *Client) InviteRestrictedContext(ctx context.Context, teamName, channe
 		"first_name": {firstName},
 		"last_name":  {lastName},
 		"restricted": {"1"},
-		"token":      {api.token},
+		"token":      {api.authConfig.AccessToken},
 		"resend":     {"true"},
 		"set_active": {"true"},
 		"_attempts":  {"1"},
@@ -113,7 +113,7 @@ func (api *Client) InviteToTeamContext(ctx context.Context, teamName, firstName,
 		"email":      {emailAddress},
 		"first_name": {firstName},
 		"last_name":  {lastName},
-		"token":      {api.token},
+		"token":      {api.authConfig.AccessToken},
 		"set_active": {"true"},
 		"_attempts":  {"1"},
 	}
@@ -135,7 +135,7 @@ func (api *Client) SetRegular(teamName, user string) error {
 func (api *Client) SetRegularContext(ctx context.Context, teamName, user string) error {
 	values := url.Values{
 		"user":       {user},
-		"token":      {api.token},
+		"token":      {api.authConfig.AccessToken},
 		"set_active": {"true"},
 		"_attempts":  {"1"},
 	}
@@ -157,7 +157,7 @@ func (api *Client) SendSSOBindingEmail(teamName, user string) error {
 func (api *Client) SendSSOBindingEmailContext(ctx context.Context, teamName, user string) error {
 	values := url.Values{
 		"user":       {user},
-		"token":      {api.token},
+		"token":      {api.authConfig.AccessToken},
 		"set_active": {"true"},
 		"_attempts":  {"1"},
 	}
@@ -180,7 +180,7 @@ func (api *Client) SetUltraRestrictedContext(ctx context.Context, teamName, uid,
 	values := url.Values{
 		"user":       {uid},
 		"channel":    {channel},
-		"token":      {api.token},
+		"token":      {api.authConfig.AccessToken},
 		"set_active": {"true"},
 		"_attempts":  {"1"},
 	}
@@ -202,7 +202,7 @@ func (api *Client) SetRestricted(teamName, uid string) error {
 func (api *Client) SetRestrictedContext(ctx context.Context, teamName, uid string) error {
 	values := url.Values{
 		"user":       {uid},
-		"token":      {api.token},
+		"token":      {api.authConfig.AccessToken},
 		"set_active": {"true"},
 		"_attempts":  {"1"},
 	}

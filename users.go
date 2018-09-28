@@ -209,7 +209,7 @@ func (api *Client) GetUserPresence(user string) (*UserPresence, error) {
 // GetUserPresenceContext will retrieve the current presence status of given user with a custom context.
 func (api *Client) GetUserPresenceContext(ctx context.Context, user string) (*UserPresence, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"user":  {user},
 	}
 
@@ -228,7 +228,7 @@ func (api *Client) GetUserInfo(user string) (*User, error) {
 // GetUserInfoContext will retrieve the complete user information with a custom context
 func (api *Client) GetUserInfoContext(ctx context.Context, user string) (*User, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"user":  {user},
 	}
 
@@ -306,7 +306,7 @@ func (t UserPagination) Next(ctx context.Context) (_ UserPagination, err error) 
 	values := url.Values{
 		"limit":    {strconv.Itoa(t.limit)},
 		"presence": {strconv.FormatBool(t.presence)},
-		"token":    {t.c.token},
+		"token":    {t.c.authConfig.AccessToken},
 		"cursor":   {t.previousResp.Cursor},
 	}
 
@@ -352,7 +352,7 @@ func (api *Client) GetUserByEmail(email string) (*User, error) {
 // GetUserByEmailContext will retrieve the complete user information by email with a custom context
 func (api *Client) GetUserByEmailContext(ctx context.Context, email string) (*User, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"email": {email},
 	}
 	response, err := userRequest(ctx, api.httpclient, "users.lookupByEmail", values, api.debug)
@@ -370,7 +370,7 @@ func (api *Client) SetUserAsActive() error {
 // SetUserAsActiveContext marks the currently authenticated user as active with a custom context
 func (api *Client) SetUserAsActiveContext(ctx context.Context) (err error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 
 	_, err = userRequest(ctx, api.httpclient, "users.setActive", values, api.debug)
@@ -385,7 +385,7 @@ func (api *Client) SetUserPresence(presence string) error {
 // SetUserPresenceContext changes the currently authenticated user presence with a custom context
 func (api *Client) SetUserPresenceContext(ctx context.Context, presence string) error {
 	values := url.Values{
-		"token":    {api.token},
+		"token":    {api.authConfig.AccessToken},
 		"presence": {presence},
 	}
 
@@ -401,7 +401,7 @@ func (api *Client) GetUserIdentity() (*UserIdentityResponse, error) {
 // GetUserIdentityContext will retrieve user info available per identity scopes with a custom context
 func (api *Client) GetUserIdentityContext(ctx context.Context) (*UserIdentityResponse, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	response := &UserIdentityResponse{}
 
@@ -424,7 +424,7 @@ func (api *Client) SetUserPhoto(image string, params UserSetPhotoParams) error {
 func (api *Client) SetUserPhotoContext(ctx context.Context, image string, params UserSetPhotoParams) error {
 	response := &SlackResponse{}
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if params.CropX != DEFAULT_USER_PHOTO_CROP_X {
 		values.Add("crop_x", strconv.Itoa(params.CropX))
@@ -453,7 +453,7 @@ func (api *Client) DeleteUserPhoto() error {
 func (api *Client) DeleteUserPhotoContext(ctx context.Context) error {
 	response := &SlackResponse{}
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 
 	err := postForm(ctx, api.httpclient, SLACK_API+"users.deletePhoto", values, response, api.debug)
@@ -501,7 +501,7 @@ func (api *Client) SetUserCustomStatusContext(ctx context.Context, statusText, s
 	}
 
 	values := url.Values{
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 		"profile": {string(profile)},
 	}
 
@@ -541,7 +541,7 @@ type getUserProfileResponse struct {
 
 // GetUserProfileContext retrieves a user's profile information with a context.
 func (api *Client) GetUserProfileContext(ctx context.Context, userID string, includeLabels bool) (*UserProfile, error) {
-	values := url.Values{"token": {api.token}, "user": {userID}}
+	values := url.Values{"token": {api.authConfig.AccessToken}, "user": {userID}}
 	if includeLabels {
 		values.Add("include_labels", "true")
 	}

@@ -115,7 +115,7 @@ func (api *Client) GetTeamInfo() (*TeamInfo, error) {
 // GetTeamInfoContext gets the Team Information of the user with a custom context
 func (api *Client) GetTeamInfoContext(ctx context.Context) (*TeamInfo, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 
 	response, err := api.teamRequest(ctx,"team.info", values)
@@ -133,7 +133,7 @@ func (api *Client) GetAccessLogs(params AccessLogParameters) ([]Login, *Paging, 
 // GetAccessLogsContext retrieves a page of logins according to the parameters given with a custom context
 func (api *Client) GetAccessLogsContext(ctx context.Context, params AccessLogParameters) ([]Login, *Paging, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if params.Count != DEFAULT_LOGINS_COUNT {
 		values.Add("count", strconv.Itoa(params.Count))
@@ -155,7 +155,7 @@ func (api *Client) GetBillableInfo(user string) (map[string]BillingActive, error
 
 func (api *Client) GetBillableInfoContext(ctx context.Context, user string) (map[string]BillingActive, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"user":  {user},
 	}
 
@@ -170,7 +170,7 @@ func (api *Client) GetBillableInfoForTeam() (map[string]BillingActive, error) {
 // GetBillableInfoForTeamContext returns the billing_active status of all users on the team with a custom context
 func (api *Client) GetBillableInfoForTeamContext(ctx context.Context) (map[string]BillingActive, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 
 	return api.billableInfoRequest(ctx,"team.billableInfo", values)

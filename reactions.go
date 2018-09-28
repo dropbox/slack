@@ -136,7 +136,7 @@ func (api *Client) AddReaction(name string, item ItemRef) error {
 // AddReactionContext adds a reaction emoji to a message, file or file comment with a custom context.
 func (api *Client) AddReactionContext(ctx context.Context, name string, item ItemRef) error {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if name != "" {
 		values.Set("name", name)
@@ -170,7 +170,7 @@ func (api *Client) RemoveReaction(name string, item ItemRef) error {
 // RemoveReactionContext removes a reaction emoji from a message, file or file comment with a custom context.
 func (api *Client) RemoveReactionContext(ctx context.Context, name string, item ItemRef) error {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if name != "" {
 		values.Set("name", name)
@@ -204,7 +204,7 @@ func (api *Client) GetReactions(item ItemRef, params GetReactionsParameters) ([]
 // GetReactionsContext returns details about the reactions on an item with a custom context
 func (api *Client) GetReactionsContext(ctx context.Context, item ItemRef, params GetReactionsParameters) ([]ItemReaction, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if item.Channel != "" {
 		values.Set("channel", item.Channel)
@@ -240,7 +240,7 @@ func (api *Client) ListReactions(params ListReactionsParameters) ([]ReactedItem,
 // ListReactionsContext returns information about the items a user reacted to with a custom context.
 func (api *Client) ListReactionsContext(ctx context.Context, params ListReactionsParameters) ([]ReactedItem, *Paging, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if params.User != DEFAULT_REACTIONS_USER {
 		values.Add("user", params.User)

@@ -21,7 +21,7 @@ func (api *Client) AddPin(channel string, item ItemRef) error {
 func (api *Client) AddPinContext(ctx context.Context, channel string, item ItemRef) error {
 	values := url.Values{
 		"channel": {channel},
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 	}
 	if item.Timestamp != "" {
 		values.Set("timestamp", item.Timestamp)
@@ -50,7 +50,7 @@ func (api *Client) RemovePin(channel string, item ItemRef) error {
 func (api *Client) RemovePinContext(ctx context.Context, channel string, item ItemRef) error {
 	values := url.Values{
 		"channel": {channel},
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 	}
 	if item.Timestamp != "" {
 		values.Set("timestamp", item.Timestamp)
@@ -79,7 +79,7 @@ func (api *Client) ListPins(channel string) ([]Item, *Paging, error) {
 func (api *Client) ListPinsContext(ctx context.Context, channel string) ([]Item, *Paging, error) {
 	values := url.Values{
 		"channel": {channel},
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 	}
 
 	response := &listPinsResponseFull{}

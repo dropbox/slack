@@ -24,12 +24,13 @@ var (
 
 func setUpClientForWorkspaceApp(authToken string, refreshToken string) *Client  {
 	once.Do(startServer)
-	refreshConfig := AuthConfig{
+	authConfig := AuthConfig{
+		AccessToken: authToken,
 		RefreshToken: refreshToken,
 		ClientId: testClientId,
 		ClientSecret: testClientSecret,
 	}
-	return NewWithRefreshToken(authToken, refreshConfig)
+	return NewWithRefreshToken(authConfig)
 }
 
 func startServer() {

@@ -157,7 +157,7 @@ func (api *Client) GetFileInfo(fileID string, count, page int) (*File, []Comment
 // GetFileInfoContext retrieves a file and related comments with a custom context
 func (api *Client) GetFileInfoContext(ctx context.Context, fileID string, count, page int) (*File, []Comment, *Paging, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"file":  {fileID},
 		"count": {strconv.Itoa(count)},
 		"page":  {strconv.Itoa(page)},
@@ -178,7 +178,7 @@ func (api *Client) GetFiles(params GetFilesParameters) ([]File, *Paging, error) 
 // GetFilesContext retrieves all files according to the parameters given with a custom context
 func (api *Client) GetFilesContext(ctx context.Context, params GetFilesParameters) ([]File, *Paging, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if params.User != DEFAULT_FILES_USER {
 		values.Add("user", params.User)
@@ -224,7 +224,7 @@ func (api *Client) UploadFileContext(ctx context.Context, params FileUploadParam
 	}
 	response := &fileResponseFull{}
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if params.Filetype != "" {
 		values.Add("filetype", params.Filetype)
@@ -273,7 +273,7 @@ func (api *Client) DeleteFileCommentContext(ctx context.Context, fileID, comment
 	}
 
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"file":  {fileID},
 		"id":    {commentID},
 	}
@@ -289,7 +289,7 @@ func (api *Client) DeleteFile(fileID string) error {
 // DeleteFileContext deletes a file with a custom context
 func (api *Client) DeleteFileContext(ctx context.Context, fileID string) (err error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"file":  {fileID},
 	}
 
@@ -305,7 +305,7 @@ func (api *Client) RevokeFilePublicURL(fileID string) (*File, error) {
 // RevokeFilePublicURLContext disables public/external sharing for a file with a custom context
 func (api *Client) RevokeFilePublicURLContext(ctx context.Context, fileID string) (*File, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"file":  {fileID},
 	}
 
@@ -324,7 +324,7 @@ func (api *Client) ShareFilePublicURL(fileID string) (*File, []Comment, *Paging,
 // ShareFilePublicURLContext enabled public/external sharing for a file with a custom context
 func (api *Client) ShareFilePublicURLContext(ctx context.Context, fileID string) (*File, []Comment, *Paging, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"file":  {fileID},
 	}
 

@@ -49,7 +49,7 @@ func (api *Client) CloseIMChannel(channel string) (bool, bool, error) {
 // CloseIMChannelContext closes the direct message channel with a custom context
 func (api *Client) CloseIMChannelContext(ctx context.Context, channel string) (bool, bool, error) {
 	values := url.Values{
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 		"channel": {channel},
 	}
 
@@ -70,7 +70,7 @@ func (api *Client) OpenIMChannel(user string) (bool, bool, string, error) {
 // Returns some status and the channel ID
 func (api *Client) OpenIMChannelContext(ctx context.Context, user string) (bool, bool, string, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"user":  {user},
 	}
 
@@ -89,7 +89,7 @@ func (api *Client) MarkIMChannel(channel, ts string) (err error) {
 // MarkIMChannelContext sets the read mark of a direct message channel to a specific point with a custom context
 func (api *Client) MarkIMChannelContext(ctx context.Context, channel, ts string) error {
 	values := url.Values{
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 		"channel": {channel},
 		"ts":      {ts},
 	}
@@ -106,7 +106,7 @@ func (api *Client) GetIMHistory(channel string, params HistoryParameters) (*Hist
 // GetIMHistoryContext retrieves the direct message channel history with a custom context
 func (api *Client) GetIMHistoryContext(ctx context.Context, channel string, params HistoryParameters) (*History, error) {
 	values := url.Values{
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 		"channel": {channel},
 	}
 	if params.Latest != DEFAULT_HISTORY_LATEST {
@@ -148,7 +148,7 @@ func (api *Client) GetIMChannels() ([]IM, error) {
 // GetIMChannelsContext returns the list of direct message channels with a custom context
 func (api *Client) GetIMChannelsContext(ctx context.Context) ([]IM, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 
 	response, err := api.imRequest(ctx,"im.list", values)
