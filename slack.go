@@ -158,7 +158,7 @@ func (api *Client) AuthTestContext(ctx context.Context) (response *AuthTestRespo
 }
 
 func (api *Client) callSlackMethod(ctx context.Context, method string, values url.Values, response interface{}) error {
-	return postSlackMethod2(ctx, api.httpclient, "pins.add", &api.refreshConfig, values, response, api.debug)
+	return postSlackMethod(ctx, api.httpclient, "pins.add", &api.refreshConfig, values, response, api.debug)
 }
 
 // SetDebug switches the api into debug mode

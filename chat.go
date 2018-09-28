@@ -169,7 +169,7 @@ func (api *Client) SendMessageContext(ctx context.Context, channelID string, opt
 		return "", "", "", err
 	}
 
-	if err = postFormWithRefresh(ctx, api.httpclient, config.endpoint, config.values, config.refreshConfig, &response, api.debug); err != nil {
+	if err = postFormWithRefresh(ctx, api.httpclient, config.endpoint, config.values, &config.refreshConfig, &response, api.debug); err != nil {
 		return "", "", "", err
 	}
 

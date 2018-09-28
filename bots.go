@@ -21,7 +21,7 @@ type botResponseFull struct {
 
 func botRequest(ctx context.Context, client HTTPRequester, path string, values url.Values, debug bool) (*botResponseFull, error) {
 	response := &botResponseFull{}
-	err := postSlackMethod2(ctx, client, path, nil, values, response, debug)
+	err := postSlackMethod(ctx, client, path, nil, values, response, debug)
 	if err != nil {
 		return nil, err
 	}
