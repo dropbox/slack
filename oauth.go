@@ -96,12 +96,12 @@ func RefreshToken(ctx context.Context, refreshConfig RefreshTokenConfig, debug b
 		return "", errors.New(response.Error)
 	}
 
-	if refreshConfig.internalCallback != nil {
+	if refreshConfig.onRefresh != nil {
 		updateArgs := AuthTokenUpdateArgs{
 			TeamId: response.TeamID,
 			AccessToken: response.AccessToken,
 		}
-		refreshConfig.internalCallback(updateArgs)
+		refreshConfig.onRefresh(updateArgs)
 	}
 
 	return response.AccessToken, nil
