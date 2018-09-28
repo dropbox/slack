@@ -143,7 +143,7 @@ func (api *Client) AuthTest() (response *AuthTestResponse, error error) {
 func (api *Client) AuthTestContext(ctx context.Context) (response *AuthTestResponse, error error) {
 	api.Debugf("Challenging auth...")
 	responseFull := &authTestResponseFull{}
-	err := postSlackMethod(ctx, api.httpclient, "auth.test", url.Values{"token": {api.token}}, responseFull, api.debug)
+	err := api.callSlackMethod(ctx,"auth.test", url.Values{"token": {api.token}}, responseFull)
 	if err != nil {
 		api.Debugf("failed to test for auth: %s", err)
 		return nil, err

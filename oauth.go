@@ -70,7 +70,7 @@ func GetOAuthResponseContext(ctx context.Context, clientID, clientSecret, code, 
 		"redirect_uri":  {redirectURI},
 	}
 	response := &OAuthResponse{}
-	err = postSlackMethod(ctx, customHTTPClient, "oauth.access", values, response, debug)
+	err = postSlackMethod2(ctx, customHTTPClient, "oauth.access", nil, values, response, debug)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func RefreshToken(ctx context.Context, refreshConfig RefreshTokenConfig, debug b
 		"grant_type": {"refresh_token"},
 	}
 	response := &OAuthResponse{}
-	err := postSlackMethod(ctx, customHTTPClient, "oauth.access", values, response, debug)
+	err := postSlackMethod2(ctx, customHTTPClient, "oauth.access", nil, values, response, debug)
 	if err != nil {
 		return "", err
 	}

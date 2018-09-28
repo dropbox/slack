@@ -237,12 +237,7 @@ func createPostFormRequest(endpoint string, values url.Values) (*http.Request, e
 }
 
 // post to a slack web method.
-func postSlackMethod(ctx context.Context, client HTTPRequester, path string, values url.Values, intf interface{}, debug bool) error {
-	return postForm(ctx, client, SLACK_API+path, values, intf, debug)
-}
-
-// post to a slack web method.
-func postSlackMethod2(ctx context.Context, client HTTPRequester, path string, refreshConfig *RefreshTokenConfig, values url.Values, intf interface{}, debug bool) error {
+func postSlackMethod(ctx context.Context, client HTTPRequester, path string, refreshConfig *RefreshTokenConfig, values url.Values, intf interface{}, debug bool) error {
 	return postFormWithRefresh(ctx, client, SLACK_API+path, values, refreshConfig, intf, debug)
 }
 
