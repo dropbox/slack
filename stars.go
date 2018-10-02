@@ -45,7 +45,7 @@ func (api *Client) AddStar(channel string, item ItemRef) error {
 func (api *Client) AddStarContext(ctx context.Context, channel string, item ItemRef) error {
 	values := url.Values{
 		"channel": {channel},
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 	}
 	if item.Timestamp != "" {
 		values.Set("timestamp", item.Timestamp)
@@ -58,7 +58,7 @@ func (api *Client) AddStarContext(ctx context.Context, channel string, item Item
 	}
 
 	response := &SlackResponse{}
-	if err := postSlackMethod(ctx, api.httpclient, "stars.add", values, response, api.debug); err != nil {
+	if err := api.callSlackMethod(ctx, "stars.add", values, response); err != nil {
 		return err
 	}
 
@@ -74,7 +74,7 @@ func (api *Client) RemoveStar(channel string, item ItemRef) error {
 func (api *Client) RemoveStarContext(ctx context.Context, channel string, item ItemRef) error {
 	values := url.Values{
 		"channel": {channel},
-		"token":   {api.token},
+		"token":   {api.authConfig.AccessToken},
 	}
 	if item.Timestamp != "" {
 		values.Set("timestamp", item.Timestamp)
@@ -87,7 +87,7 @@ func (api *Client) RemoveStarContext(ctx context.Context, channel string, item I
 	}
 
 	response := &SlackResponse{}
-	if err := postSlackMethod(ctx, api.httpclient, "stars.remove", values, response, api.debug); err != nil {
+	if err := api.callSlackMethod(ctx, "stars.remove", values, response); err != nil {
 		return err
 	}
 
@@ -102,7 +102,7 @@ func (api *Client) ListStars(params StarsParameters) ([]Item, *Paging, error) {
 // ListStarsContext returns information about the stars a user added with a custom context
 func (api *Client) ListStarsContext(ctx context.Context, params StarsParameters) ([]Item, *Paging, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if params.User != DEFAULT_STARS_USER {
 		values.Add("user", params.User)
@@ -115,7 +115,7 @@ func (api *Client) ListStarsContext(ctx context.Context, params StarsParameters)
 	}
 
 	response := &listResponseFull{}
-	err := postSlackMethod(ctx, api.httpclient, "stars.list", values, response, api.debug)
+	err := api.callSlackMethod(ctx, "stars.list", values, response)
 	if err != nil {
 		return nil, nil, err
 	}

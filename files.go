@@ -137,9 +137,9 @@ func NewGetFilesParameters() GetFilesParameters {
 	}
 }
 
-func fileRequest(ctx context.Context, client HTTPRequester, path string, values url.Values, debug bool) (*fileResponseFull, error) {
+func (api *Client) fileRequest(ctx context.Context, path string, values url.Values) (*fileResponseFull, error) {
 	response := &fileResponseFull{}
-	err := postForm(ctx, client, SLACK_API+path, values, response, debug)
+	err := api.callSlackMethod(ctx, path, values, response)
 	if err != nil {
 		return nil, err
 	}
@@ -157,13 +157,13 @@ func (api *Client) GetFileInfo(fileID string, count, page int) (*File, []Comment
 // GetFileInfoContext retrieves a file and related comments with a custom context
 func (api *Client) GetFileInfoContext(ctx context.Context, fileID string, count, page int) (*File, []Comment, *Paging, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"file":  {fileID},
 		"count": {strconv.Itoa(count)},
 		"page":  {strconv.Itoa(page)},
 	}
 
-	response, err := fileRequest(ctx, api.httpclient, "files.info", values, api.debug)
+	response, err := api.fileRequest(ctx,"files.info", values)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -178,7 +178,7 @@ func (api *Client) GetFiles(params GetFilesParameters) ([]File, *Paging, error) 
 // GetFilesContext retrieves all files according to the parameters given with a custom context
 func (api *Client) GetFilesContext(ctx context.Context, params GetFilesParameters) ([]File, *Paging, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if params.User != DEFAULT_FILES_USER {
 		values.Add("user", params.User)
@@ -202,7 +202,7 @@ func (api *Client) GetFilesContext(ctx context.Context, params GetFilesParameter
 		values.Add("page", strconv.Itoa(params.Page))
 	}
 
-	response, err := fileRequest(ctx, api.httpclient, "files.list", values, api.debug)
+	response, err := api.fileRequest(ctx, "files.list", values)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -224,7 +224,7 @@ func (api *Client) UploadFileContext(ctx context.Context, params FileUploadParam
 	}
 	response := &fileResponseFull{}
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if params.Filetype != "" {
 		values.Add("filetype", params.Filetype)
@@ -246,7 +246,7 @@ func (api *Client) UploadFileContext(ctx context.Context, params FileUploadParam
 	}
 	if params.Content != "" {
 		values.Add("content", params.Content)
-		err = postForm(ctx, api.httpclient, SLACK_API+"files.upload", values, response, api.debug)
+		err = api.callSlackMethod(ctx, "files.upload", values, response)
 	} else if params.File != "" {
 		err = postLocalWithMultipartResponse(ctx, api.httpclient, "files.upload", params.File, "file", values, response, api.debug)
 	} else if params.Reader != nil {
@@ -273,11 +273,11 @@ func (api *Client) DeleteFileCommentContext(ctx context.Context, fileID, comment
 	}
 
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"file":  {fileID},
 		"id":    {commentID},
 	}
-	_, err = fileRequest(ctx, api.httpclient, "files.comments.delete", values, api.debug)
+	_, err = api.fileRequest(ctx, "files.comments.delete", values)
 	return err
 }
 
@@ -289,11 +289,11 @@ func (api *Client) DeleteFile(fileID string) error {
 // DeleteFileContext deletes a file with a custom context
 func (api *Client) DeleteFileContext(ctx context.Context, fileID string) (err error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"file":  {fileID},
 	}
 
-	_, err = fileRequest(ctx, api.httpclient, "files.delete", values, api.debug)
+	_, err = api.fileRequest(ctx, "files.delete", values)
 	return err
 }
 
@@ -305,11 +305,11 @@ func (api *Client) RevokeFilePublicURL(fileID string) (*File, error) {
 // RevokeFilePublicURLContext disables public/external sharing for a file with a custom context
 func (api *Client) RevokeFilePublicURLContext(ctx context.Context, fileID string) (*File, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"file":  {fileID},
 	}
 
-	response, err := fileRequest(ctx, api.httpclient, "files.revokePublicURL", values, api.debug)
+	response, err := api.fileRequest(ctx, "files.revokePublicURL", values)
 	if err != nil {
 		return nil, err
 	}
@@ -324,11 +324,11 @@ func (api *Client) ShareFilePublicURL(fileID string) (*File, []Comment, *Paging,
 // ShareFilePublicURLContext enabled public/external sharing for a file with a custom context
 func (api *Client) ShareFilePublicURLContext(ctx context.Context, fileID string) (*File, []Comment, *Paging, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"file":  {fileID},
 	}
 
-	response, err := fileRequest(ctx, api.httpclient, "files.sharedPublicURL", values, api.debug)
+	response, err := api.fileRequest(ctx, "files.sharedPublicURL", values)
 	if err != nil {
 		return nil, nil, nil, err
 	}

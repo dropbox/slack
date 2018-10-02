@@ -36,9 +36,9 @@ type dndTeamInfoResponse struct {
 	SlackResponse
 }
 
-func dndRequest(ctx context.Context, client HTTPRequester, path string, values url.Values, debug bool) (*dndResponseFull, error) {
+func (api *Client) dndRequest(ctx context.Context, path string, values url.Values) (*dndResponseFull, error) {
 	response := &dndResponseFull{}
-	err := postSlackMethod(ctx, client, path, values, response, debug)
+	err := api.callSlackMethod(ctx, path, values, response)
 	if err != nil {
 		return nil, err
 	}
@@ -56,12 +56,12 @@ func (api *Client) EndDND() error {
 // EndDNDContext ends the user's scheduled Do Not Disturb session with a custom context
 func (api *Client) EndDNDContext(ctx context.Context) error {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 
 	response := &SlackResponse{}
 
-	if err := postSlackMethod(ctx, api.httpclient, "dnd.endDnd", values, response, api.debug); err != nil {
+	if err := api.callSlackMethod(ctx, "dnd.endDnd", values, response); err != nil {
 		return err
 	}
 
@@ -76,10 +76,10 @@ func (api *Client) EndSnooze() (*DNDStatus, error) {
 // EndSnoozeContext ends the current user's snooze mode with a custom context
 func (api *Client) EndSnoozeContext(ctx context.Context) (*DNDStatus, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 
-	response, err := dndRequest(ctx, api.httpclient, "dnd.endSnooze", values, api.debug)
+	response, err := api.dndRequest(ctx, "dnd.endSnooze", values)
 	if err != nil {
 		return nil, err
 	}
@@ -94,13 +94,13 @@ func (api *Client) GetDNDInfo(user *string) (*DNDStatus, error) {
 // GetDNDInfoContext provides information about a user's current Do Not Disturb settings with a custom context.
 func (api *Client) GetDNDInfoContext(ctx context.Context, user *string) (*DNDStatus, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 	}
 	if user != nil {
 		values.Set("user", *user)
 	}
 
-	response, err := dndRequest(ctx, api.httpclient, "dnd.info", values, api.debug)
+	response, err := api.dndRequest(ctx, "dnd.info", values)
 	if err != nil {
 		return nil, err
 	}
@@ -115,12 +115,12 @@ func (api *Client) GetDNDTeamInfo(users []string) (map[string]DNDStatus, error) 
 // GetDNDTeamInfoContext provides information about a user's current Do Not Disturb settings with a custom context.
 func (api *Client) GetDNDTeamInfoContext(ctx context.Context, users []string) (map[string]DNDStatus, error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"users": {strings.Join(users, ",")},
 	}
 	response := &dndTeamInfoResponse{}
 
-	if err := postSlackMethod(ctx, api.httpclient, "dnd.teamInfo", values, response, api.debug); err != nil {
+	if err := api.callSlackMethod(ctx, "dnd.teamInfo", values, response); err != nil {
 		return nil, err
 	}
 	if !response.Ok {
@@ -140,11 +140,11 @@ func (api *Client) SetSnooze(minutes int) (*DNDStatus, error) {
 // For more information see the SetSnooze docs
 func (api *Client) SetSnoozeContext(ctx context.Context, minutes int) (*DNDStatus, error) {
 	values := url.Values{
-		"token":       {api.token},
+		"token":       {api.authConfig.AccessToken},
 		"num_minutes": {strconv.Itoa(minutes)},
 	}
 
-	response, err := dndRequest(ctx, api.httpclient, "dnd.setSnooze", values, api.debug)
+	response, err := api.dndRequest(ctx, "dnd.setSnooze", values)
 	if err != nil {
 		return nil, err
 	}

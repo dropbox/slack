@@ -84,7 +84,7 @@ func NewSearchParameters() SearchParameters {
 
 func (api *Client) _search(ctx context.Context, path, query string, params SearchParameters, files, messages bool) (response *searchResponseFull, error error) {
 	values := url.Values{
-		"token": {api.token},
+		"token": {api.authConfig.AccessToken},
 		"query": {query},
 	}
 	if params.Sort != DEFAULT_SEARCH_SORT {
@@ -104,7 +104,7 @@ func (api *Client) _search(ctx context.Context, path, query string, params Searc
 	}
 
 	response = &searchResponseFull{}
-	err := postSlackMethod(ctx, api.httpclient, path, values, response, api.debug)
+	err := api.callSlackMethod(ctx, path, values, response)
 	if err != nil {
 		return nil, err
 	}

@@ -61,8 +61,26 @@ type authTestResponseFull struct {
 	AuthTestResponse
 }
 
+type ResponseFromSlack interface{
+	GetSlackResponse() SlackResponse
+}
+
+type AuthTokenUpdateArgs struct {
+	EnterpriseId string
+	TeamId       string
+	AccessToken  string
+}
+
+type AuthConfig struct {
+	AccessToken				   string
+	RefreshToken               string
+	ClientId                   string
+	ClientSecret               string
+	AccessTokenRefreshCallback func(AuthTokenUpdateArgs)
+}
+
 type Client struct {
-	token      string
+	authConfig AuthConfig
 	info       Info
 	debug      bool
 	httpclient HTTPRequester
@@ -81,7 +99,22 @@ func OptionHTTPClient(c HTTPRequester) func(*Client) {
 // New builds a slack client from the provided token and options.
 func New(token string, options ...Option) *Client {
 	s := &Client{
-		token:      token,
+			authConfig: AuthConfig{
+			AccessToken: token,
+		},
+		httpclient: customHTTPClient,
+	}
+
+	for _, opt := range options {
+		opt(s)
+	}
+
+	return s
+}
+
+func NewWithRefreshToken(refreshConfig AuthConfig, options ...Option) *Client {
+	s := &Client{
+		authConfig: refreshConfig,
 		httpclient: customHTTPClient,
 	}
 
@@ -101,7 +134,7 @@ func (api *Client) AuthTest() (response *AuthTestResponse, error error) {
 func (api *Client) AuthTestContext(ctx context.Context) (response *AuthTestResponse, error error) {
 	api.Debugf("Challenging auth...")
 	responseFull := &authTestResponseFull{}
-	err := postSlackMethod(ctx, api.httpclient, "auth.test", url.Values{"token": {api.token}}, responseFull, api.debug)
+	err := api.callSlackMethod(ctx, "auth.test", url.Values{"token": {api.authConfig.AccessToken}}, responseFull)
 	if err != nil {
 		api.Debugf("failed to test for auth: %s", err)
 		return nil, err
@@ -113,6 +146,14 @@ func (api *Client) AuthTestContext(ctx context.Context) (response *AuthTestRespo
 
 	api.Debugf("Auth challenge was successful with response %+v", responseFull.AuthTestResponse)
 	return &responseFull.AuthTestResponse, nil
+}
+
+func (api *Client) callSlackMethod(ctx context.Context, method string, values url.Values, response interface{}) error {
+	return postSlackMethod(ctx, api.httpclient, method, &api.authConfig, values, response, api.debug)
+}
+
+func (api *Client) callSlackMethodWebApiFormat(ctx context.Context, teamName string, method string, values url.Values, response interface{}) error {
+	return postSlackMethodWebApiFormat(ctx, api.httpclient, teamName, method, &api.authConfig, values, response, api.debug)
 }
 
 // SetDebug switches the api into debug mode
