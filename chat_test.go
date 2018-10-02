@@ -43,6 +43,7 @@ func TestChatInvalidToken(t *testing.T) {
 
 	_, _, err := api.PostMessage("#test", "test", PostMessageParameters{})
 	require.NotNil(t, err)
+	require.Equal(t, "invalid_auth", err.Error())
 }
 
 func TestChatRefreshToken(t *testing.T) {

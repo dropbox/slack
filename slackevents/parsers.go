@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/dropbox/slack"
+	"slack"
 )
 
 // eventsMap checks both slack.EventsMapping and

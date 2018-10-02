@@ -5,7 +5,7 @@ import (
 
 	slacktest "github.com/lusis/slack-test"
 	"github.com/stretchr/testify/assert"
-	"github.com/dropbox/slack"
+	"slack"
 )
 
 const (

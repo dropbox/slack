@@ -99,7 +99,7 @@ func OptionHTTPClient(c HTTPRequester) func(*Client) {
 // New builds a slack client from the provided token and options.
 func New(token string, options ...Option) *Client {
 	s := &Client{
-		authConfig:      AuthConfig{
+			authConfig: AuthConfig{
 			AccessToken: token,
 		},
 		httpclient: customHTTPClient,

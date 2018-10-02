@@ -33,7 +33,7 @@ func setUpClientForWorkspaceApp(authToken string, refreshToken string) *Client  
 	return NewWithRefreshToken(authConfig)
 }
 
-func startServer() {
+func mockHandleOauthAccess() {
 	http.HandleFunc("/oauth.access", func(w http.ResponseWriter, r *http.Request) {
 		if r.FormValue("client_id") != testClientId {
 			writeSlackResponse(w, false, "invalid_client_id")
@@ -59,6 +59,10 @@ func startServer() {
 		response := []byte(`{"ok": false,"error":"unknown"}`)
 		w.Write(response)
 	})
+}
+
+func startServer() {
+	mockHandleOauthAccess()
 
 	server := httptest.NewServer(nil)
 	serverAddr = server.Listener.Addr().String()
