@@ -189,9 +189,9 @@ func NewUserSetPhotoParams() UserSetPhotoParams {
 	}
 }
 
-func userRequest(ctx context.Context, client HTTPRequester, path string, values url.Values, debug bool) (*userResponseFull, error) {
+func (api *Client) userRequest(ctx context.Context, path string, values url.Values) (*userResponseFull, error) {
 	response := &userResponseFull{}
-	err := postForm(ctx, client, SLACK_API+path, values, response, debug)
+	err := api.callSlackMethod(ctx, path, values, response)
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +213,7 @@ func (api *Client) GetUserPresenceContext(ctx context.Context, user string) (*Us
 		"user":  {user},
 	}
 
-	response, err := userRequest(ctx, api.httpclient, "users.getPresence", values, api.debug)
+	response, err := api.userRequest(ctx,"users.getPresence", values)
 	if err != nil {
 		return nil, err
 	}
@@ -232,7 +232,7 @@ func (api *Client) GetUserInfoContext(ctx context.Context, user string) (*User, 
 		"user":  {user},
 	}
 
-	response, err := userRequest(ctx, api.httpclient, "users.info", values, api.debug)
+	response, err := api.userRequest(ctx,"users.info", values)
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +310,7 @@ func (t UserPagination) Next(ctx context.Context) (_ UserPagination, err error) 
 		"cursor":   {t.previousResp.Cursor},
 	}
 
-	if resp, err = userRequest(ctx, t.c.httpclient, "users.list", values, t.c.debug); err != nil {
+	if resp, err = t.c.userRequest(ctx,"users.list", values); err != nil {
 		return t, err
 	}
 
@@ -355,7 +355,7 @@ func (api *Client) GetUserByEmailContext(ctx context.Context, email string) (*Us
 		"token": {api.authConfig.AccessToken},
 		"email": {email},
 	}
-	response, err := userRequest(ctx, api.httpclient, "users.lookupByEmail", values, api.debug)
+	response, err := api.userRequest(ctx, "users.lookupByEmail", values)
 	if err != nil {
 		return nil, err
 	}
@@ -373,7 +373,7 @@ func (api *Client) SetUserAsActiveContext(ctx context.Context) (err error) {
 		"token": {api.authConfig.AccessToken},
 	}
 
-	_, err = userRequest(ctx, api.httpclient, "users.setActive", values, api.debug)
+	_, err = api.userRequest(ctx, "users.setActive", values)
 	return err
 }
 
@@ -389,7 +389,7 @@ func (api *Client) SetUserPresenceContext(ctx context.Context, presence string) 
 		"presence": {presence},
 	}
 
-	_, err := userRequest(ctx, api.httpclient, "users.setPresence", values, api.debug)
+	_, err := api.userRequest(ctx, "users.setPresence", values)
 	return err
 }
 
@@ -405,7 +405,7 @@ func (api *Client) GetUserIdentityContext(ctx context.Context) (*UserIdentityRes
 	}
 	response := &UserIdentityResponse{}
 
-	err := postForm(ctx, api.httpclient, SLACK_API+"users.identity", values, response, api.debug)
+	err := api.callSlackMethod(ctx, "users.identity", values, response)
 	if err != nil {
 		return nil, err
 	}
@@ -456,7 +456,7 @@ func (api *Client) DeleteUserPhotoContext(ctx context.Context) error {
 		"token": {api.authConfig.AccessToken},
 	}
 
-	err := postForm(ctx, api.httpclient, SLACK_API+"users.deletePhoto", values, response, api.debug)
+	err := api.callSlackMethod(ctx, "users.deletePhoto", values, response)
 	if err != nil {
 		return err
 	}
@@ -506,7 +506,7 @@ func (api *Client) SetUserCustomStatusContext(ctx context.Context, statusText, s
 	}
 
 	response := &userResponseFull{}
-	if err = postForm(ctx, api.httpclient, SLACK_API+"users.profile.set", values, response, api.debug); err != nil {
+	if err = api.callSlackMethod(ctx, "users.profile.set", values, response); err != nil {
 		return err
 	}
 

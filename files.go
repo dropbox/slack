@@ -137,9 +137,9 @@ func NewGetFilesParameters() GetFilesParameters {
 	}
 }
 
-func fileRequest(ctx context.Context, client HTTPRequester, path string, values url.Values, debug bool) (*fileResponseFull, error) {
+func (api *Client) fileRequest(ctx context.Context, path string, values url.Values) (*fileResponseFull, error) {
 	response := &fileResponseFull{}
-	err := postForm(ctx, client, SLACK_API+path, values, response, debug)
+	err := api.callSlackMethod(ctx, path, values, response)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +163,7 @@ func (api *Client) GetFileInfoContext(ctx context.Context, fileID string, count,
 		"page":  {strconv.Itoa(page)},
 	}
 
-	response, err := fileRequest(ctx, api.httpclient, "files.info", values, api.debug)
+	response, err := api.fileRequest(ctx,"files.info", values)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -202,7 +202,7 @@ func (api *Client) GetFilesContext(ctx context.Context, params GetFilesParameter
 		values.Add("page", strconv.Itoa(params.Page))
 	}
 
-	response, err := fileRequest(ctx, api.httpclient, "files.list", values, api.debug)
+	response, err := api.fileRequest(ctx, "files.list", values)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -246,7 +246,7 @@ func (api *Client) UploadFileContext(ctx context.Context, params FileUploadParam
 	}
 	if params.Content != "" {
 		values.Add("content", params.Content)
-		err = postForm(ctx, api.httpclient, SLACK_API+"files.upload", values, response, api.debug)
+		err = api.callSlackMethod(ctx, "files.upload", values, response)
 	} else if params.File != "" {
 		err = postLocalWithMultipartResponse(ctx, api.httpclient, "files.upload", params.File, "file", values, response, api.debug)
 	} else if params.Reader != nil {
@@ -277,7 +277,7 @@ func (api *Client) DeleteFileCommentContext(ctx context.Context, fileID, comment
 		"file":  {fileID},
 		"id":    {commentID},
 	}
-	_, err = fileRequest(ctx, api.httpclient, "files.comments.delete", values, api.debug)
+	_, err = api.fileRequest(ctx, "files.comments.delete", values)
 	return err
 }
 
@@ -293,7 +293,7 @@ func (api *Client) DeleteFileContext(ctx context.Context, fileID string) (err er
 		"file":  {fileID},
 	}
 
-	_, err = fileRequest(ctx, api.httpclient, "files.delete", values, api.debug)
+	_, err = api.fileRequest(ctx, "files.delete", values)
 	return err
 }
 
@@ -309,7 +309,7 @@ func (api *Client) RevokeFilePublicURLContext(ctx context.Context, fileID string
 		"file":  {fileID},
 	}
 
-	response, err := fileRequest(ctx, api.httpclient, "files.revokePublicURL", values, api.debug)
+	response, err := api.fileRequest(ctx, "files.revokePublicURL", values)
 	if err != nil {
 		return nil, err
 	}
@@ -328,7 +328,7 @@ func (api *Client) ShareFilePublicURLContext(ctx context.Context, fileID string)
 		"file":  {fileID},
 	}
 
-	response, err := fileRequest(ctx, api.httpclient, "files.sharedPublicURL", values, api.debug)
+	response, err := api.fileRequest(ctx, "files.sharedPublicURL", values)
 	if err != nil {
 		return nil, nil, nil, err
 	}

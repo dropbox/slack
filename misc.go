@@ -183,15 +183,6 @@ func postJSON(ctx context.Context, client HTTPRequester, endpoint, token string,
 	return doPost(ctx, client, req, intf, debug)
 }
 
-// post a url encoded form.
-func postForm(ctx context.Context, client HTTPRequester, endpoint string, values url.Values, intf interface{}, debug bool) error {
-	req, err := createPostFormRequest(endpoint, values)
-	if err != nil {
-		return err
-	}
-	return doPost(ctx, client, req, intf, debug)
-}
-
 // post a url encoded form, retrying with refresh token if auth fails.
 func postFormWithRefresh(ctx context.Context, client HTTPRequester, endpoint string, values url.Values,
 	refreshConfig *AuthConfig, intf interface{}, debug bool) error {
@@ -241,9 +232,9 @@ func postSlackMethod(ctx context.Context, client HTTPRequester, path string, ref
 	return postFormWithRefresh(ctx, client, SLACK_API+path, values, refreshConfig, intf, debug)
 }
 
-func parseAdminResponse(ctx context.Context, client HTTPRequester, method string, teamName string, values url.Values, intf interface{}, debug bool) error {
-	endpoint := fmt.Sprintf(SLACK_WEB_API_FORMAT, teamName, method, time.Now().Unix())
-	return postForm(ctx, client, endpoint, values, intf, debug)
+func postSlackMethodWebApiFormat(ctx context.Context, client HTTPRequester, teamName string, path string, refreshConfig *AuthConfig, values url.Values, intf interface{}, debug bool) error {
+	endpoint := fmt.Sprintf(SLACK_WEB_API_FORMAT, teamName, path, time.Now().Unix())
+	return postFormWithRefresh(ctx, client, endpoint, values, refreshConfig, intf, debug)
 }
 
 func logResponse(resp *http.Response, debug bool) error {

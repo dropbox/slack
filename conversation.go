@@ -338,8 +338,7 @@ func (api *Client) CreateConversationContext(ctx context.Context, channelName st
 		"name":       {channelName},
 		"is_private": {strconv.FormatBool(isPrivate)},
 	}
-	response, err := channelRequest(
-		ctx, api.httpclient, "conversations.create", values, api.debug)
+	response, err := api.channelRequest(ctx, "conversations.create", values)
 	if err != nil {
 		return nil, err
 	}
@@ -359,8 +358,7 @@ func (api *Client) GetConversationInfoContext(ctx context.Context, channelID str
 		"channel":        {channelID},
 		"include_locale": {strconv.FormatBool(includeLocale)},
 	}
-	response, err := channelRequest(
-		ctx, api.httpclient, "conversations.info", values, api.debug)
+	response, err := api.channelRequest(ctx, "conversations.info", values)
 	if err != nil {
 		return nil, err
 	}
@@ -380,7 +378,7 @@ func (api *Client) LeaveConversationContext(ctx context.Context, channelID strin
 		"channel": {channelID},
 	}
 
-	response, err := channelRequest(ctx, api.httpclient, "conversations.leave", values, api.debug)
+	response, err := api.channelRequest(ctx, "conversations.leave", values)
 	if err != nil {
 		return false, err
 	}
